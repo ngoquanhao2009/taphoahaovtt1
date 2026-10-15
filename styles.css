@@ -15,9 +15,12 @@ body {
   background: #0c1210;
   color: var(--ink);
   font-family: "DM Sans", sans-serif;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 a { color: inherit; text-decoration: none; }
+img { user-select: none; -webkit-user-select: none; -webkit-user-drag: none; user-drag: none; }
 
 .page-shell {
   min-height: 100vh;

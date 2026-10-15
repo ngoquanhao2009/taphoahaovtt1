@@ -1,6 +1,8 @@
 const shareButton = document.querySelector('[data-share]');
 const toast = document.querySelector('.toast');
 
+document.addEventListener('dragstart', (event) => event.preventDefault());
+
 shareButton.addEventListener('click', async () => {
   const shareData = { title: 'Hào VTT | Dịch vụ Roblox', url: window.location.href };
 
