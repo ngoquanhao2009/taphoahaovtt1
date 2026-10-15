@@ -68,6 +68,7 @@ h1 { margin: 18px 0 2px; font: 700 clamp(29px, 8vw, 40px)/1 "Space Grotesk", san
 .link-card.featured { border-color: rgba(214, 243, 106, .35); background: linear-gradient(100deg, rgba(60, 74, 42, .88), rgba(23, 36, 29, .78)); }
 .link-icon { display: grid; width: 48px; height: 48px; flex: 0 0 48px; place-items: center; border-radius: 13px; font: 700 20px "Space Grotesk", sans-serif; }
 .roblox-icon { background: var(--lime); color: #27330f; transform: rotate(-8deg); }
+.service-logo { width: 42px; height: 42px; object-fit: contain; transform: rotate(8deg); }
 .egg-icon { background: #dbe5da; color: #234635; font-size: 25px; }
 .link-copy { display: flex; min-width: 0; flex: 1; flex-direction: column; gap: 4px; }
 .link-copy strong { font: 600 16px "Space Grotesk", sans-serif; }
