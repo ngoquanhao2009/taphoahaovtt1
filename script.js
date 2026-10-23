@@ -156,6 +156,13 @@ function updatePhysics() {
     }
     element.style.transform = `translate3d(${body.position.x - width / 2}px, ${body.position.y - height / 2}px, 0) rotate(${body.angle}rad)`;
   });
+  physicsPairs.forEach((pair) => {
+    if (!pair.balloon) return;
+    pair.balloonPhase = (pair.balloonPhase || 0) + .035;
+    const sway = Math.sin(pair.balloonPhase) * 12;
+    pair.balloon.style.transform = `translate3d(${pair.body.position.x - 22 + sway}px, ${pair.body.position.y - pair.height / 2 - 76}px, 0)`;
+    pair.balloonString.style.transform = `translate3d(${pair.body.position.x - 1 + sway / 2}px, ${pair.body.position.y - pair.height / 2 - 34}px, 0) rotate(${sway / 18}rad)`;
+  });
   animationFrameId = window.requestAnimationFrame(updatePhysics);
 }
 
@@ -235,6 +242,7 @@ function resetGravity() {
   toyTimers = [];
   if (engine) Matter.Composite.clear(engine.world, false);
   document.querySelectorAll('.spawned-item').forEach((element) => element.remove());
+  document.querySelectorAll('.attached-balloon, .balloon-string').forEach((element) => element.remove());
   document.querySelectorAll('.physics-item').forEach((element) => {
     element.classList.remove('physics-active');
     element.style.width = '';
@@ -304,6 +312,7 @@ function applyToolToPair(pair) {
   if (!pair || activeTool === 'grab') return;
   const { body } = pair;
   if (activeTool === 'balloon') {
+    attachBalloon(pair);
     Matter.Body.applyForce(body, body.position, { x: 0, y: -.008 * body.mass });
     Matter.Body.setVelocity(body, { x: body.velocity.x, y: -6 });
     playToySound('pop');
@@ -319,6 +328,20 @@ function applyToolToPair(pair) {
     playToySound('boing');
     showToast(pair.scaleState === 1 ? '🔨 To khổng lồ!' : pair.scaleState === 2 ? '🔨 Nhỏ tí hon!' : '🔨 Về cỡ chuẩn');
   }
+}
+
+function attachBalloon(pair) {
+  if (pair.balloon) return;
+  const balloon = document.createElement('span');
+  balloon.className = 'attached-balloon';
+  balloon.textContent = ['🎈', '🎈', '🎈'][Math.floor(Math.random() * 3)];
+  const balloonString = document.createElement('span');
+  balloonString.className = 'balloon-string';
+  document.querySelector('.page-shell').append(balloon, balloonString);
+  pair.balloon = balloon;
+  pair.balloonString = balloonString;
+  pair.balloonPhase = Math.random() * Math.PI * 2;
+  showToast('🎈 Bóng bay đã buộc vào vật thể');
 }
 
 function interactWithPair(pair) {
@@ -371,6 +394,8 @@ function addToy(type, x = window.innerWidth * (.25 + Math.random() * .5), y = 11
       window.clearInterval(timer);
       shockwaveAt(body.position.x, body.position.y, 1.3);
       Matter.Composite.remove(engine.world, body);
+      pair.balloon?.remove();
+      pair.balloonString?.remove();
       element.remove();
       physicsPairs = physicsPairs.filter((item) => item !== pair);
     }, 1000);
