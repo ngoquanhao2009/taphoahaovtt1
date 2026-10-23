@@ -115,7 +115,7 @@ img { user-select: none; -webkit-user-select: none; -webkit-user-drag: none; }
 .spawned-item:active { cursor: grabbing; }
 .spawned-icon { display: grid; width: 34px; height: 34px; flex: 0 0 34px; place-items: center; border-radius: 10px; background: rgba(214, 243, 106, .16); color: var(--lime); font-size: 16px; }
 
-footer { display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 30px; color: #8f9c92; font-size: 12px; }
+footer { display: flex; width: fit-content; align-items: center; justify-content: center; gap: 8px; margin: 30px auto 0; color: #8f9c92; font-size: 12px; }
 footer a { color: #c7d2c5; }
 footer a:hover { color: var(--lime); }
 .status-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--lime); box-shadow: 0 0 0 4px rgba(214, 243, 106, .1); }
