@@ -3,6 +3,8 @@ const toast = document.querySelector('.toast');
 const copyCodeButton = document.querySelector('[data-copy-code]');
 const gravityBadge = document.querySelector('#gravity-badge');
 const gravitySound = document.querySelector('#gravity-sound');
+const gravityMainToggle = document.querySelector('#gravity-main-toggle');
+const gravityMainLabel = document.querySelector('#gravity-main-label');
 const toyboxToggle = document.querySelector('#toybox-toggle');
 const toyboxDropdown = document.querySelector('#toybox-dropdown');
 const codeModal = document.querySelector('#code-modal');
@@ -163,6 +165,7 @@ function startGravity() {
   createAudioContext();
   isGravityActive = true;
   setGravityStatus('Đang hoạt động', true);
+  gravityMainLabel.textContent = 'Tạm dừng';
 
   const measurements = [...document.querySelectorAll('.physics-item')].map((element) => {
     const rect = element.getBoundingClientRect();
@@ -214,6 +217,17 @@ function startGravity() {
   showToast('⚡ Trọng lực đã bật, hãy kéo các khối!');
 }
 
+function toggleGravityState() {
+  if (!isGravityActive) {
+    startGravity();
+    return;
+  }
+  runner.enabled = !runner.enabled;
+  gravityMainLabel.textContent = runner.enabled ? 'Tạm dừng' : 'Tiếp tục';
+  setGravityStatus(runner.enabled ? 'Đang hoạt động' : 'Đã đóng băng', runner.enabled);
+  showToast(runner.enabled ? '▶ Tiếp tục trọng lực' : '⏸ Đã tạm dừng trọng lực');
+}
+
 function resetGravity() {
   if (animationFrameId) window.cancelAnimationFrame(animationFrameId);
   if (runner) Matter.Runner.stop(runner);
@@ -232,6 +246,7 @@ function resetGravity() {
   isGravityActive = false;
   isZeroGravity = false;
   isInverted = false;
+  gravityMainLabel.textContent = 'Bật trọng lực';
   setGravityStatus('Sẵn sàng');
   showToast('↺ Đã khôi phục bố cục');
 }
@@ -398,6 +413,7 @@ gravitySound.addEventListener('click', () => {
   showToast(soundEnabled ? '🔊 Đã bật âm thanh' : '🔇 Đã tắt âm thanh');
 });
 document.querySelector('#gravity-reset').addEventListener('click', resetGravity);
+gravityMainToggle.addEventListener('click', toggleGravityState);
 
 document.querySelector('#gravity-code').addEventListener('click', () => {
   codeModal.classList.add('open');

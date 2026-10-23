@@ -59,6 +59,7 @@ img { user-select: none; -webkit-user-select: none; -webkit-user-drag: none; }
 .gravity-button { min-height: 30px; padding: 6px 9px; border: 1px solid rgba(226, 242, 203, .15); border-radius: 9px; background: rgba(31, 44, 39, .9); color: #dfe9df; cursor: pointer; font: 600 10px "DM Sans", sans-serif; transition: .2s ease; }
 .gravity-button:hover { border-color: rgba(214, 243, 106, .6); transform: translateY(-1px); }
 .gravity-button.primary { border-color: rgba(129, 102, 255, .55); background: linear-gradient(100deg, #4f46e5, #9b4dca); color: white; }
+.gravity-button.gravity-main-toggle { border-color: rgba(214, 243, 106, .45); background: linear-gradient(100deg, #536d1e, #819f32); color: #f5ffd3; }
 .gravity-button.cyan { border-color: rgba(34, 211, 238, .35); color: #8aeafa; }
 .gravity-button.pink { border-color: rgba(244, 114, 182, .35); color: #f8a8d0; }
 .gravity-button.orange { border-color: rgba(251, 146, 60, .4); color: #ffc18d; }
