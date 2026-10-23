@@ -231,6 +231,8 @@ function toggleGravityState() {
 function resetGravity() {
   if (animationFrameId) window.cancelAnimationFrame(animationFrameId);
   if (runner) Matter.Runner.stop(runner);
+  toyTimers.forEach((timer) => window.clearInterval(timer));
+  toyTimers = [];
   if (engine) Matter.Composite.clear(engine.world, false);
   document.querySelectorAll('.spawned-item').forEach((element) => element.remove());
   document.querySelectorAll('.physics-item').forEach((element) => {
@@ -319,6 +321,17 @@ function applyToolToPair(pair) {
   }
 }
 
+function interactWithPair(pair) {
+  if (!pair?.meta?.sound) return;
+  playToySound(pair.meta.sound, pair.meta.frequency);
+  if (pair.meta.toyType === 'dice') {
+    const faces = ['⚀', '⚁', '⚂', '⚃', '⚄', '⚅'];
+    const face = pair.element.querySelector('.toy-face');
+    if (face) face.textContent = faces[Math.floor(Math.random() * faces.length)];
+  }
+  if (pair.meta.word) showToast(`${pair.meta.word}`);
+}
+
 function addToy(type, x = window.innerWidth * (.25 + Math.random() * .5), y = 110, frequency = null) {
   if (!isGravityActive) startGravity();
   if (!engine) return;
@@ -332,23 +345,35 @@ function addToy(type, x = window.innerWidth * (.25 + Math.random() * .5), y = 11
   element.className = 'physics-item spawned-item toy-object';
   element.style.width = `${size}px`;
   element.style.height = `${size}px`;
-  element.innerHTML = `<span class="toy-emoji">${emoji}</span><small>${type === 'bomb' ? '3s' : ''}</small>`;
+  element.innerHTML = `<span class="${type === 'dice' ? 'toy-face' : 'toy-emoji'}">${type === 'dice' ? ['⚀', '⚁', '⚂', '⚃', '⚄', '⚅'][Math.floor(Math.random() * 6)] : emoji}</span><small>${type === 'bomb' ? '3s' : ''}</small>`;
   document.querySelector('.page-shell').appendChild(element);
   const body = type === 'basketball' || type === 'duck' || type === 'piggy' ? Matter.Bodies.circle(x, y, size / 2, { restitution: .85, friction: .08 }) : Matter.Bodies.rectangle(x, y, size, size, { restitution: .72, chamfer: { radius: 14 } });
   Matter.Body.setVelocity(body, { x: (Math.random() - .5) * 8, y: 3 });
   Matter.Composite.add(engine.world, body);
-  const pair = { element, body, width: size, height: size, meta: { sound, word, frequency }, scaleState: 0 };
+  const pair = { element, body, width: size, height: size, meta: { sound, word, frequency, toyType: type }, scaleState: 0 };
   physicsPairs.push(pair);
   playToySound(sound, frequency);
   showToast(`${emoji} ${word}`);
   if (type === 'bomb') {
-    const timer = window.setTimeout(() => {
-      if (!physicsPairs.includes(pair)) return;
+    let seconds = 3;
+    const timer = window.setInterval(() => {
+      if (!physicsPairs.includes(pair)) {
+        window.clearInterval(timer);
+        return;
+      }
+      seconds -= 1;
+      if (seconds > 0) {
+        playToySound('tick');
+        element.querySelector('small').textContent = `${seconds}s`;
+        showToast(`💣 Tích tắc... ${seconds}s`);
+        return;
+      }
+      window.clearInterval(timer);
       shockwaveAt(body.position.x, body.position.y, 1.3);
       Matter.Composite.remove(engine.world, body);
       element.remove();
       physicsPairs = physicsPairs.filter((item) => item !== pair);
-    }, 3000);
+    }, 1000);
     toyTimers.push(timer);
   }
 }
@@ -437,7 +462,10 @@ document.addEventListener('pointerdown', (event) => {
   if (activeTool === 'candy-gun') shootCandy(event.clientX, event.clientY);
   if (activeTool === 'shockwave') shockwaveAt(event.clientX, event.clientY);
   const pair = physicsPairs.find((item) => item.element.contains(event.target));
-  if (pair) applyToolToPair(pair);
+  if (pair) {
+    interactWithPair(pair);
+    applyToolToPair(pair);
+  }
 }, true);
 
 document.addEventListener('pointermove', (event) => {
