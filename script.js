@@ -114,7 +114,7 @@ function playToySound(type, customFrequency = null) {
 
 function createWalls(width, height) {
   const thickness = 120;
-  const floorOffset = 88;
+  const floorOffset = 150;
   const wallOptions = { isStatic: true, restitution: .7, friction: .1 };
   return [
     Matter.Bodies.rectangle(width / 2, height - floorOffset + thickness / 2, width * 2, thickness, wallOptions),
@@ -145,7 +145,7 @@ function updatePhysics() {
       Matter.Body.setVelocity(body, { x: body.velocity.x * .92, y: hoverY });
       Matter.Body.setAngularVelocity(body, body.angularVelocity * .9);
     }
-    const floorOffset = 88;
+    const floorOffset = 150;
     const minX = width / 2 + margin;
     const maxX = Math.max(minX, window.innerWidth - width / 2 - margin);
     const minY = 76 + height / 2;
