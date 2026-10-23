@@ -19,6 +19,8 @@ let isGravityActive = false;
 let isZeroGravity = false;
 let isInverted = false;
 let isDragging = false;
+let suppressNextLinkClick = false;
+let pointerStart = null;
 let soundEnabled = true;
 let audioContext = null;
 let toastTimer = null;
@@ -130,8 +132,11 @@ function startGravity() {
 
   const mouse = Matter.Mouse.create(document.body);
   const mouseConstraint = Matter.MouseConstraint.create(engine, { mouse, constraint: { stiffness: .25, damping: .1, render: { visible: false } } });
-  Matter.Events.on(mouseConstraint, 'startdrag', () => { isDragging = true; createAudioContext(); });
-  Matter.Events.on(mouseConstraint, 'enddrag', () => window.setTimeout(() => { isDragging = false; }, 100));
+  Matter.Events.on(mouseConstraint, 'startdrag', () => createAudioContext());
+  Matter.Events.on(mouseConstraint, 'enddrag', () => {
+    if (isDragging) suppressNextLinkClick = true;
+    window.setTimeout(() => { isDragging = false; }, 100);
+  });
   Matter.Composite.add(engine.world, mouseConstraint);
 
   let lastSound = 0;
@@ -264,10 +269,26 @@ codeModal.addEventListener('click', (event) => {
 });
 document.querySelector('#copy-snippet').addEventListener('click', () => copyText(codeSnippet.textContent, 'Đã sao chép code nhúng'));
 
+document.addEventListener('pointerdown', (event) => {
+  pointerStart = { x: event.clientX, y: event.clientY };
+  isDragging = false;
+}, true);
+
+document.addEventListener('pointermove', (event) => {
+  if (!pointerStart || event.buttons === 0) return;
+  const distance = Math.hypot(event.clientX - pointerStart.x, event.clientY - pointerStart.y);
+  if (distance > 8) isDragging = true;
+}, true);
+
+document.addEventListener('pointerup', () => {
+  pointerStart = null;
+}, true);
+
 document.addEventListener('click', (event) => {
-  if (isDragging && event.target.closest('.link-card, .brand, .share-button')) {
+  if (suppressNextLinkClick && event.target.closest('.link-card, .brand, .share-button')) {
     event.preventDefault();
     event.stopPropagation();
+    suppressNextLinkClick = false;
   }
 }, true);
 
