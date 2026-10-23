@@ -358,6 +358,8 @@ function interactWithPair(pair) {
   if (pair.lastInteraction && now - pair.lastInteraction < 140) return;
   pair.lastInteraction = now;
   pair.hovering = false;
+  Matter.Body.setStatic(pair.body, false);
+  Matter.Body.setVelocity(pair.body, { x: pair.body.velocity.x, y: -3.5 });
   playToySound(pair.meta.sound, pair.meta.frequency);
   if (pair.meta.toyType === 'dice') {
     const faces = ['⚀', '⚁', '⚂', '⚃', '⚄', '⚅'];
@@ -383,7 +385,8 @@ function addToy(type, x = window.innerWidth * (.25 + Math.random() * .5), y = 11
   element.innerHTML = `<span class="${type === 'dice' ? 'toy-face' : 'toy-emoji'}">${type === 'dice' ? ['⚀', '⚁', '⚂', '⚃', '⚄', '⚅'][Math.floor(Math.random() * 6)] : emoji}</span><small>${type === 'bomb' ? '3s' : ''}</small>`;
   document.querySelector('.page-shell').appendChild(element);
   const body = type === 'basketball' || type === 'duck' || type === 'piggy' ? Matter.Bodies.circle(x, y, size / 2, { restitution: .85, friction: .08 }) : Matter.Bodies.rectangle(x, y, size, size, { restitution: .72, chamfer: { radius: 14 } });
-  Matter.Body.setVelocity(body, { x: (Math.random() - .5) * 8, y: -6 });
+  Matter.Body.setStatic(body, true);
+  Matter.Body.setVelocity(body, { x: 0, y: 0 });
   Matter.Body.setAngularVelocity(body, (Math.random() - .5) * .16);
   Matter.Composite.add(engine.world, body);
   const pair = { element, body, width: size, height: size, hovering: true, meta: { sound, word, frequency, toyType: type }, scaleState: 0 };
