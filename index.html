@@ -20,15 +20,39 @@
         <span class="gravity-badge" id="gravity-badge">Sẵn sàng</span>
       </div>
       <div class="gravity-actions">
-        <button class="gravity-button primary" type="button" id="gravity-toggle">⚡ <span id="gravity-toggle-label">Bật trọng lực</span></button>
-        <button class="gravity-button cyan" type="button" id="gravity-zero">◌ <span class="button-label">Không trọng lực</span></button>
-        <button class="gravity-button pink" type="button" id="gravity-invert">↕ <span class="button-label">Đảo trọng lực</span></button>
-        <button class="gravity-button orange" type="button" id="gravity-explode">✹ <span class="button-label">Bùng nổ</span></button>
-        <button class="gravity-button green" type="button" id="gravity-spawn">＋ <span class="button-label">Thêm đồ vật</span></button>
+        <button class="gravity-button primary toybox-toggle" type="button" id="toybox-toggle">🧰 <span>Kho đồ chơi & tương tác</span>⌄</button>
         <button class="gravity-button neutral" type="button" id="gravity-sound" aria-label="Bật tắt âm thanh">🔊</button>
         <a class="gravity-button neutral" href="https://ngoquanhao2009.github.io/taphoahaovtt1/" target="_blank" rel="noreferrer" aria-label="Mở trang hiện tại">↗</a>
         <button class="gravity-button neutral" type="button" id="gravity-code" aria-label="Xem code nhúng">&lt;/&gt;</button>
         <button class="gravity-button neutral" type="button" id="gravity-reset" aria-label="Khôi phục bố cục">↺</button>
+      </div>
+      <div class="toybox-dropdown" id="toybox-dropdown" aria-hidden="true">
+        <div class="toybox-heading"><div><strong>Kho đồ chơi & tương tác</strong><small>Chọn công cụ rồi chạm hoặc kéo trên trang</small></div><button type="button" id="toybox-close" aria-label="Đóng kho đồ chơi">×</button></div>
+        <section class="toybox-group"><h3>🖐️ Chế độ tay cầm</h3><div class="toybox-grid">
+          <button class="toybox-item selected" type="button" data-tool="grab">🖐️ <span><b>Kéo & ném</b><small>Nắm vật thể</small></span></button>
+          <button class="toybox-item" type="button" data-tool="balloon">🎈 <span><b>Bóng bay</b><small>Thổi bay vật thể</small></span></button>
+          <button class="toybox-item" type="button" data-tool="candy-gun">🔫 <span><b>Súng kẹo</b><small>Pew pew!</small></span></button>
+          <button class="toybox-item" type="button" data-tool="black-hole">🌀 <span><b>Hố đen</b><small>Giữ chuột để hút</small></span></button>
+          <button class="toybox-item" type="button" data-tool="wind-fan">💨 <span><b>Quạt bão</b><small>Giữ để thổi</small></span></button>
+          <button class="toybox-item" type="button" data-tool="shockwave">⚡ <span><b>Sóng xung kích</b><small>Chạm để nổ</small></span></button>
+          <button class="toybox-item" type="button" data-tool="hammer">🔨 <span><b>Búa cao su</b><small>Đổi kích thước</small></span></button>
+        </div></section>
+        <section class="toybox-group"><h3>🎁 Đồ chơi có tiếng</h3><div class="toybox-grid">
+          <button class="toybox-item" type="button" data-toy="duck">🦆 <span><b>Vịt vàng</b><small>Quạc quạc!</small></span></button>
+          <button class="toybox-item" type="button" data-toy="basketball">🏀 <span><b>Bóng rổ</b><small>Boing!</small></span></button>
+          <button class="toybox-item" type="button" data-toy="bomb">💣 <span><b>Bom hẹn giờ</b><small>Tích tắc 3s</small></span></button>
+          <button class="toybox-item" type="button" data-toy="dino">🦖 <span><b>Khủng long</b><small>Ngoàm ngoàm!</small></span></button>
+          <button class="toybox-item" type="button" data-toy="piano">🎹 <span><b>Đàn piano</b><small>7 nốt nhạc</small></span></button>
+          <button class="toybox-item" type="button" data-toy="dice">🎲 <span><b>Xúc xắc</b><small>Lạch cạch</small></span></button>
+          <button class="toybox-item" type="button" data-toy="piggy">🐷 <span><b>Heo đất</b><small>Ụt ịt!</small></span></button>
+          <button class="toybox-item" type="button" data-toy="snacks">🧋 <span><b>Mưa đồ ăn</b><small>Rơi liên tục</small></span></button>
+        </div></section>
+        <section class="toybox-group"><h3>🌍 Môi trường</h3><div class="toybox-grid environment-grid">
+          <button class="toybox-item" type="button" data-env="trampoline">🎪 <span><b>Sàn nhún</b><small>Bật tung đáy</small></span></button>
+          <button class="toybox-item" type="button" data-env="underwater">🌊 <span><b>Dưới đáy biển</b><small>Rơi chậm</small></span></button>
+          <button class="toybox-item" type="button" data-env="gravity">↕ <span><b>Đổi trọng lực</b><small>Chuẩn / 0G / ngược</small></span></button>
+          <button class="toybox-item" type="button" data-env="eyes">👀 <span><b>Mắt hoạt hình</b><small>Bật / tắt mắt</small></span></button>
+        </div></section>
       </div>
     </div>
 
