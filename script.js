@@ -221,7 +221,7 @@ function spawnItem() {
   const catalog = [['✦', 'Kim cương VIP', '＋9999 KC'], ['⚙', 'Bot tự động', 'HAOVTT1 AI'], ['★', 'Top 1 uy tín', '5 sao'], ['⚡', 'Deal đặc biệt', 'Flash sale'], ['⌘', 'Source VIP', 'Full HTML/JS'], ['◉', 'Hỗ trợ 24/7', 'Zalo / Discord']];
   const [icon, title, tag] = catalog[Math.floor(Math.random() * catalog.length)];
   const element = document.createElement('div');
-  element.className = 'spawned-item';
+  element.className = 'physics-item physics-active spawned-item';
   element.innerHTML = `<span class="spawned-icon">${icon}</span><span><strong>${title}</strong><small>${tag}</small></span>`;
   document.querySelector('.page-shell').appendChild(element);
   const width = 175;
