@@ -140,8 +140,10 @@ function updatePhysics() {
   physicsPairs.forEach((pair) => {
     const { element, body, width, height } = pair;
     const margin = 10;
-    if (pair.floatUntil && performance.now() < pair.floatUntil) {
-      Matter.Body.applyForce(body, body.position, { x: 0, y: -.00055 * body.mass });
+    if (pair.hovering) {
+      const hoverY = Math.sin(performance.now() * .002 + body.id) * .45;
+      Matter.Body.setVelocity(body, { x: body.velocity.x * .92, y: hoverY });
+      Matter.Body.setAngularVelocity(body, body.angularVelocity * .9);
     }
     const floorOffset = 88;
     const minX = width / 2 + margin;
@@ -352,6 +354,10 @@ function attachBalloon(pair) {
 
 function interactWithPair(pair) {
   if (!pair?.meta?.sound) return;
+  const now = performance.now();
+  if (pair.lastInteraction && now - pair.lastInteraction < 140) return;
+  pair.lastInteraction = now;
+  pair.hovering = false;
   playToySound(pair.meta.sound, pair.meta.frequency);
   if (pair.meta.toyType === 'dice') {
     const faces = ['⚀', '⚁', '⚂', '⚃', '⚄', '⚅'];
@@ -380,7 +386,7 @@ function addToy(type, x = window.innerWidth * (.25 + Math.random() * .5), y = 11
   Matter.Body.setVelocity(body, { x: (Math.random() - .5) * 8, y: -6 });
   Matter.Body.setAngularVelocity(body, (Math.random() - .5) * .16);
   Matter.Composite.add(engine.world, body);
-  const pair = { element, body, width: size, height: size, floatUntil: performance.now() + 1500, meta: { sound, word, frequency, toyType: type }, scaleState: 0 };
+  const pair = { element, body, width: size, height: size, hovering: true, meta: { sound, word, frequency, toyType: type }, scaleState: 0 };
   physicsPairs.push(pair);
   playToySound(sound, frequency);
   showToast(`${emoji} ${word}`);
