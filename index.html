@@ -9,15 +9,35 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.19.0/matter.min.js"></script>
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
+    <div class="gravity-dock" id="gravity-dock" aria-label="Bảng điều khiển Gravity">
+      <div class="gravity-status">
+        <span class="gravity-orb" aria-hidden="true">✦</span>
+        <span class="gravity-title">Hào VTT Gravity</span>
+        <span class="gravity-badge" id="gravity-badge">Sẵn sàng</span>
+      </div>
+      <div class="gravity-actions">
+        <button class="gravity-button primary" type="button" id="gravity-toggle">⚡ <span id="gravity-toggle-label">Bật trọng lực</span></button>
+        <button class="gravity-button cyan" type="button" id="gravity-zero">◌ <span class="button-label">Không trọng lực</span></button>
+        <button class="gravity-button pink" type="button" id="gravity-invert">↕ <span class="button-label">Đảo trọng lực</span></button>
+        <button class="gravity-button orange" type="button" id="gravity-explode">✹ <span class="button-label">Bùng nổ</span></button>
+        <button class="gravity-button green" type="button" id="gravity-spawn">＋ <span class="button-label">Thêm đồ vật</span></button>
+        <button class="gravity-button neutral" type="button" id="gravity-sound" aria-label="Bật tắt âm thanh">🔊</button>
+        <a class="gravity-button neutral" href="https://ngoquanhao2009.github.io/taphoahaovtt1/" target="_blank" rel="noreferrer" aria-label="Mở trang hiện tại">↗</a>
+        <button class="gravity-button neutral" type="button" id="gravity-code" aria-label="Xem code nhúng">&lt;/&gt;</button>
+        <button class="gravity-button neutral" type="button" id="gravity-reset" aria-label="Khôi phục bố cục">↺</button>
+      </div>
+    </div>
+
     <div class="page-shell">
       <div class="cover" aria-hidden="true"></div>
       <div class="grain" aria-hidden="true"></div>
 
       <main class="profile" aria-label="Trang liên kết Hào VTT">
-        <div class="topbar">
+        <div class="topbar physics-item">
           <a class="brand" href="https://www.youtube.com/@haovtt1" target="_blank" rel="noreferrer" aria-label="Mở kênh YouTube Hào VTT">
             <span class="brand-mark">H</span>
             <span>HAO VTT</span>
@@ -27,7 +47,7 @@
           </button>
         </div>
 
-        <section class="identity">
+        <section class="identity physics-item">
           <div class="avatar-wrap">
             <img class="avatar" src="https://yt3.googleusercontent.com/Gw6bbYDngzNQjKSMDN7w26TYqv9YmdfZdMx9H93D2Z0PZCjCvUmOc0iSMTvgxzJT9XIYKPm5Zw=s900-c-k-c0x00ffffff-no-rj" alt="Avatar kênh Hào VTT" />
             <span class="verified" aria-label="Đã xác minh">✓</span>
@@ -37,10 +57,12 @@
           <p class="intro">Dịch vụ Roblox nhanh, gọn và uy tín<br />Chơi vui hơn, nạp dễ hơn.</p>
         </section>
 
-        <p class="promo-code">Nhập mã : <button class="promo-copy" type="button" data-copy-code="HAOVTT1" aria-label="Sao chép mã HAOVTT1">HAOVTT1</button> <span class="promo-separator">·</span> để giảm 10% bạn nha</p>
-        <p class="promo-hint">Bấm vào chữ HAOVTT1 để copy mã bạn nha</p>
+        <div class="promo-block physics-item">
+          <p class="promo-code">Nhập mã : <button class="promo-copy" type="button" data-copy-code="HAOVTT1" aria-label="Sao chép mã HAOVTT1">HAOVTT1</button> <span class="promo-separator">·</span> để giảm 10% bạn nha</p>
+          <p class="promo-hint">Bấm vào chữ HAOVTT1 để copy mã bạn nha</p>
+        </div>
 
-        <section class="links" aria-label="Các liên kết dịch vụ">
+        <section class="links physics-item" aria-label="Các liên kết dịch vụ">
           <a class="link-card featured" href="https://topup.goslynk.com/" target="_blank" rel="noreferrer">
             <span class="link-icon roblox-icon"><img class="service-logo" src="https://topup.goslynk.com/logo.png" alt="GosLynk" /></span>
             <span class="link-copy"><strong>Dịch vụ Roblox</strong><small>Top up nhanh chóng & an toàn</small></span>
@@ -53,7 +75,7 @@
           </a>
         </section>
 
-        <footer>
+        <footer class="physics-item">
           <span class="status-dot"></span>
           <span>Đang online</span>
           <span class="footer-divider">•</span>
@@ -61,6 +83,19 @@
         </footer>
       </main>
       <div class="toast" role="status" aria-live="polite">Đã sao chép liên kết</div>
+    </div>
+    <div class="code-modal" id="code-modal" aria-hidden="true">
+      <div class="code-panel" role="dialog" aria-modal="true" aria-labelledby="code-title">
+        <div class="code-heading">
+          <div><span class="code-kicker">HAOVTT1 GRAVITY</span><h2 id="code-title">Code nhúng hiệu ứng</h2></div>
+          <button class="modal-close" type="button" id="code-close" aria-label="Đóng">×</button>
+        </div>
+        <p>Đoạn này thêm một nút Gravity độc lập vào website khác. Trang shop hiện tại vẫn dùng bản tích hợp đầy đủ.</p>
+        <pre id="embed-snippet">&lt;script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.19.0/matter.min.js"&gt;&lt;/script&gt;
+&lt;button id="haovtt1-gravity"&gt;⚡ Bật Gravity&lt;/button&gt;
+&lt;script&gt;document.querySelector('#haovtt1-gravity').onclick = () =&gt; alert('Gravity của Hào VTT đã sẵn sàng!');&lt;/script&gt;</pre>
+        <button class="copy-snippet" type="button" id="copy-snippet">Sao chép code</button>
+      </div>
     </div>
     <script src="script.js"></script>
   </body>
