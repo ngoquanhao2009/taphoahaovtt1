@@ -97,6 +97,23 @@ function createWalls(width, height) {
 
 function updatePhysics() {
   physicsPairs.forEach(({ element, body, width, height }) => {
+    const margin = 10;
+    const minX = width / 2 + margin;
+    const maxX = Math.max(minX, window.innerWidth - width / 2 - margin);
+    const minY = 76 + height / 2;
+    const maxY = Math.max(minY, window.innerHeight - height / 2 - margin);
+    const boundedX = Math.min(maxX, Math.max(minX, body.position.x));
+    const boundedY = Math.min(maxY, Math.max(minY, body.position.y));
+    const hitHorizontalEdge = boundedX !== body.position.x;
+    const hitVerticalEdge = boundedY !== body.position.y;
+
+    if (hitHorizontalEdge || hitVerticalEdge) {
+      Matter.Body.setPosition(body, { x: boundedX, y: boundedY });
+      Matter.Body.setVelocity(body, {
+        x: hitHorizontalEdge ? 0 : body.velocity.x,
+        y: hitVerticalEdge ? 0 : body.velocity.y
+      });
+    }
     element.style.transform = `translate3d(${body.position.x - width / 2}px, ${body.position.y - height / 2}px, 0) rotate(${body.angle}rad)`;
   });
   animationFrameId = window.requestAnimationFrame(updatePhysics);
@@ -192,8 +209,8 @@ function explode() {
   if (!engine) return;
   createAudioContext();
   physicsPairs.forEach(({ body }) => {
-    Matter.Body.setVelocity(body, { x: (Math.random() - .5) * 32, y: -(Math.random() * 22 + 8) });
-    Matter.Body.setAngularVelocity(body, (Math.random() - .5) * .35);
+    Matter.Body.setVelocity(body, { x: (Math.random() - .5) * 18, y: -(Math.random() * 13 + 5) });
+    Matter.Body.setAngularVelocity(body, (Math.random() - .5) * .25);
   });
   showToast('✹ Bùng nổ, mọi thứ bay tứ tung!');
 }
