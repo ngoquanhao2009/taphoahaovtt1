@@ -114,9 +114,10 @@ function playToySound(type, customFrequency = null) {
 
 function createWalls(width, height) {
   const thickness = 120;
+  const floorOffset = 88;
   const wallOptions = { isStatic: true, restitution: .7, friction: .1 };
   return [
-    Matter.Bodies.rectangle(width / 2, height + thickness / 2, width * 2, thickness, wallOptions),
+    Matter.Bodies.rectangle(width / 2, height - floorOffset + thickness / 2, width * 2, thickness, wallOptions),
     Matter.Bodies.rectangle(width / 2, 65 - thickness / 2, width * 2, thickness, wallOptions),
     Matter.Bodies.rectangle(-thickness / 2, height / 2, thickness, height * 2, wallOptions),
     Matter.Bodies.rectangle(width + thickness / 2, height / 2, thickness, height * 2, wallOptions)
@@ -138,10 +139,11 @@ function updatePhysics() {
   }
   physicsPairs.forEach(({ element, body, width, height }) => {
     const margin = 10;
+    const floorOffset = 88;
     const minX = width / 2 + margin;
     const maxX = Math.max(minX, window.innerWidth - width / 2 - margin);
     const minY = 76 + height / 2;
-    const maxY = Math.max(minY, window.innerHeight - height / 2 - margin);
+    const maxY = Math.max(minY, window.innerHeight - floorOffset - height / 2 - margin);
     const boundedX = Math.min(maxX, Math.max(minX, body.position.x));
     const boundedY = Math.min(maxY, Math.max(minY, body.position.y));
     const hitHorizontalEdge = boundedX !== body.position.x;
