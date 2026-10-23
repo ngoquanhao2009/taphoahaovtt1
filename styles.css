@@ -129,10 +129,6 @@ img { user-select: none; -webkit-user-select: none; -webkit-user-drag: none; }
 .physics-item { will-change: transform; }
 .spawned-item { position: fixed; z-index: 30; display: flex; width: 175px; min-height: 58px; align-items: center; gap: 10px; padding: 10px 13px; border: 1px solid rgba(214, 243, 106, .35); border-radius: 15px; background: rgba(15, 27, 23, .92); box-shadow: 0 14px 32px rgba(0, 0, 0, .3); color: #f3f6ef; cursor: grab; pointer-events: auto; touch-action: none; font-size: 12px; }
 .spawned-item:active { cursor: grabbing; }
-.toy-object { display: grid; place-items: center; border: 2px solid rgba(255, 255, 255, .7); border-radius: 22px; background: rgba(17, 27, 23, .9); box-shadow: 0 12px 28px rgba(0, 0, 0, .3); }
-.toy-object .toy-emoji { font-size: 34px; line-height: 1; }
-.toy-object small { color: #fda4af; font-size: 10px; font-weight: 800; }
-.candy-object { border-color: #fb7185; border-radius: 50%; background: #fff7ed; }
 .spawned-icon { display: grid; width: 34px; height: 34px; flex: 0 0 34px; place-items: center; border-radius: 10px; background: rgba(214, 243, 106, .16); color: var(--lime); font-size: 16px; }
 
 footer { display: flex; width: fit-content; align-items: center; justify-content: center; gap: 8px; margin: 30px auto 0; color: #8f9c92; font-size: 12px; }

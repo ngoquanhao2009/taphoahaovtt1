@@ -90,12 +90,12 @@ function playBump(intensity = 1) {
   oscillator.stop(now + .085);
 }
 
-function playToySound(type) {
+function playToySound(type, customFrequency = null) {
   if (!soundEnabled) return;
   createAudioContext();
   if (!audioContext) return;
   const tones = { quack: [520, 280], boing: [150, 540], pew: [950, 140], boom: [160, 32], crunch: [220, 70], pop: [340, 760], oink: [190, 290], tick: [800, 800], piano: [392, 392] };
-  const [startFrequency, endFrequency] = tones[type] || [220, 80];
+  const [startFrequency, endFrequency] = type === 'piano' ? [customFrequency || 392, customFrequency || 392] : (tones[type] || [220, 80]);
   const now = audioContext.currentTime;
   const oscillator = audioContext.createOscillator();
   const gain = audioContext.createGain();
@@ -202,7 +202,7 @@ function startGravity() {
       playBump(impact);
       pairs.forEach(({ bodyA, bodyB }) => {
         const first = physicsPairs.find((item) => item.body === bodyA || item.body === bodyB);
-        if (first?.meta?.sound) playToySound(first.meta.sound);
+        if (first?.meta?.sound) playToySound(first.meta.sound, first.meta.frequency);
       });
       lastSound = now;
     }
@@ -214,77 +214,10 @@ function startGravity() {
   showToast('⚡ Trọng lực đã bật, hãy kéo các khối!');
 }
 
-function toggleGravity() {
-  if (!isGravityActive) return startGravity();
-  runner.enabled = !runner.enabled;
-  gravityToggleLabel.textContent = runner.enabled ? 'Tạm dừng' : 'Tiếp tục';
-  setGravityStatus(runner.enabled ? 'Đang hoạt động' : 'Đã đóng băng', runner.enabled);
-  showToast(runner.enabled ? '▶ Tiếp tục vật lý' : '⏸ Đã đóng băng thời gian');
-}
-
-function toggleZeroGravity() {
-  if (!isGravityActive) startGravity();
-  if (!engine) return;
-  isZeroGravity = !isZeroGravity;
-  engine.gravity.y = isZeroGravity ? 0 : (isInverted ? -1.05 : 1.05);
-  gravityZero.classList.toggle('is-active', isZeroGravity);
-  setGravityStatus(isZeroGravity ? 'Không trọng lực' : 'Đang hoạt động', true);
-  if (isZeroGravity) physicsPairs.forEach(({ body }) => {
-    Matter.Body.setVelocity(body, { x: (Math.random() - .5) * 4, y: (Math.random() - .5) * 4 });
-    Matter.Body.setAngularVelocity(body, (Math.random() - .5) * .06);
-  });
-  showToast(isZeroGravity ? '◌ Chế độ không trọng lực' : '🌍 Đã bật lại trọng lực');
-}
-
-function invertGravity() {
-  if (!isGravityActive) startGravity();
-  if (!engine) return;
-  isZeroGravity = false;
-  gravityZero.classList.remove('is-active');
-  isInverted = !isInverted;
-  engine.gravity.y = isInverted ? -1.05 : 1.05;
-  gravityInvert.classList.toggle('is-active', isInverted);
-  setGravityStatus(isInverted ? 'Rơi lên trần' : 'Đang hoạt động', true);
-  showToast(isInverted ? '↕ Đảo ngược trọng lực' : '↓ Trọng lực hướng xuống');
-}
-
-function explode() {
-  if (!isGravityActive) startGravity();
-  if (!engine) return;
-  createAudioContext();
-  physicsPairs.forEach(({ body }) => {
-    Matter.Body.setVelocity(body, { x: (Math.random() - .5) * 18, y: -(Math.random() * 13 + 5) });
-    Matter.Body.setAngularVelocity(body, (Math.random() - .5) * .25);
-  });
-  showToast('✹ Bùng nổ, mọi thứ bay tứ tung!');
-}
-
-function spawnItem() {
-  if (!isGravityActive) startGravity();
-  if (!engine) return;
-  const catalog = [['✦', 'Kim cương VIP', '＋9999 KC'], ['⚙', 'Bot tự động', 'HAOVTT1 AI'], ['★', 'Top 1 uy tín', '5 sao'], ['⚡', 'Deal đặc biệt', 'Flash sale'], ['⌘', 'Source VIP', 'Full HTML/JS'], ['◉', 'Hỗ trợ 24/7', 'Zalo / Discord']];
-  const [icon, title, tag] = catalog[Math.floor(Math.random() * catalog.length)];
-  const element = document.createElement('div');
-  element.className = 'physics-item physics-active spawned-item';
-  element.innerHTML = `<span class="spawned-icon">${icon}</span><span><strong>${title}</strong><small>${tag}</small></span>`;
-  document.querySelector('.page-shell').appendChild(element);
-  const width = 175;
-  const height = 58;
-  element.style.width = `${width}px`;
-  element.style.height = `${height}px`;
-  const body = Matter.Bodies.rectangle(window.innerWidth * (.25 + Math.random() * .5), 110, width, height, { restitution: .68, friction: .06 });
-  Matter.Body.setVelocity(body, { x: (Math.random() - .5) * 10, y: 4 });
-  Matter.Composite.add(engine.world, body);
-  physicsPairs.push({ element, body, width, height });
-  showToast(`＋ Đã thêm ${title}`);
-}
-
 function resetGravity() {
   if (animationFrameId) window.cancelAnimationFrame(animationFrameId);
   if (runner) Matter.Runner.stop(runner);
   if (engine) Matter.Composite.clear(engine.world, false);
-  toyTimers.forEach((timer) => window.clearTimeout(timer));
-  toyTimers = [];
   document.querySelectorAll('.spawned-item').forEach((element) => element.remove());
   document.querySelectorAll('.physics-item').forEach((element) => {
     element.classList.remove('physics-active');
@@ -299,14 +232,6 @@ function resetGravity() {
   isGravityActive = false;
   isZeroGravity = false;
   isInverted = false;
-  activeTool = 'grab';
-  gravityMode = 0;
-  trampolineOn = false;
-  underwaterOn = false;
-  eyesEnabled = true;
-  document.body.classList.remove('underwater-theme');
-  document.querySelectorAll('[data-tool]').forEach((button) => button.classList.toggle('selected', button.dataset.tool === 'grab'));
-  document.querySelectorAll('[data-env]').forEach((button) => button.classList.remove('selected'));
   setGravityStatus('Sẵn sàng');
   showToast('↺ Đã khôi phục bố cục');
 }
@@ -379,7 +304,7 @@ function applyToolToPair(pair) {
   }
 }
 
-function addToy(type, x = window.innerWidth * (.25 + Math.random() * .5), y = 110) {
+function addToy(type, x = window.innerWidth * (.25 + Math.random() * .5), y = 110, frequency = null) {
   if (!isGravityActive) startGravity();
   if (!engine) return;
   const toyData = {
@@ -397,9 +322,9 @@ function addToy(type, x = window.innerWidth * (.25 + Math.random() * .5), y = 11
   const body = type === 'basketball' || type === 'duck' || type === 'piggy' ? Matter.Bodies.circle(x, y, size / 2, { restitution: .85, friction: .08 }) : Matter.Bodies.rectangle(x, y, size, size, { restitution: .72, chamfer: { radius: 14 } });
   Matter.Body.setVelocity(body, { x: (Math.random() - .5) * 8, y: 3 });
   Matter.Composite.add(engine.world, body);
-  const pair = { element, body, width: size, height: size, meta: { sound, word }, scaleState: 0 };
+  const pair = { element, body, width: size, height: size, meta: { sound, word, frequency }, scaleState: 0 };
   physicsPairs.push(pair);
-  playToySound(sound);
+  playToySound(sound, frequency);
   showToast(`${emoji} ${word}`);
   if (type === 'bomb') {
     const timer = window.setTimeout(() => {
@@ -415,7 +340,7 @@ function addToy(type, x = window.innerWidth * (.25 + Math.random() * .5), y = 11
 
 function spawnPiano() {
   [261.63, 293.66, 329.63, 349.23, 392, 440, 493.88].forEach((frequency, index) => {
-    window.setTimeout(() => addToy('piano', 110 + index * 62, 110), index * 70);
+    window.setTimeout(() => addToy('piano', 110 + index * 62, 110, frequency), index * 70);
   });
   showToast('🎹 7 phím piano đã rơi xuống');
 }
@@ -466,9 +391,6 @@ toyboxToggle.addEventListener('click', () => {
   toyboxDropdown.setAttribute('aria-hidden', String(!open));
 });
 document.querySelector('#toybox-close').addEventListener('click', closeToybox);
-document.addEventListener('click', (event) => {
-  if (!event.target.closest('.gravity-dock')) closeToybox();
-});
 gravitySound.addEventListener('click', () => {
   soundEnabled = !soundEnabled;
   gravitySound.textContent = soundEnabled ? '🔊' : '🔇';
